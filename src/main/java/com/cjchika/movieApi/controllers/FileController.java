@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @RestController
-@RequestMapping("/api/file")
+@RequestMapping("/file")
 public class FileController {
     private final FileService fileService;
 

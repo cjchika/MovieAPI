@@ -49,7 +49,7 @@ public class MovieServiceImpl implements MovieService{
         Movie savedMovie = movieRepository.save(movie);
 
         // Generate poster url
-        String posterUrl = baseUrl + "/api/file/" + fileName;
+        String posterUrl = baseUrl + "/file/" + fileName;
 
         // map Movie object to DTO
         MovieDto response = new MovieDto(
@@ -68,7 +68,7 @@ public class MovieServiceImpl implements MovieService{
 
     @Override
     public MovieDto getMovie(Integer movieId) {
-        return movieRepository.findById(movieId);
+        return null;
     }
 
     @Override
