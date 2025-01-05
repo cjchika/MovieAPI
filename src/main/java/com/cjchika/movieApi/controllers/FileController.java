@@ -20,7 +20,6 @@ public class FileController {
     private final FileService fileService;
 
     @Value("${project.poster}")
-
     private String path;
 
     public FileController(FileService fileService){
