@@ -7,9 +7,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class MovieServiceImpl implements MovieService{
@@ -32,13 +36,16 @@ public class MovieServiceImpl implements MovieService{
     @Override
     public MovieDto addMovie(MovieDto movieDto, MultipartFile file) throws IOException {
 
+        if(Files.exists(Paths.get(path + File.separator + file.getOriginalFilename()))){
+            throw new RuntimeException("File already exists! Please enter another file!");
+        }
         String fileName = fileService.uploadFile(path, file);
 
         movieDto.setPoster(fileName);
 
         // Map dto to Movie object
         Movie movie = new Movie(
-                movieDto.getMovieId(),
+                null,
                 movieDto.getTitle(),
                 movieDto.getDirector(),
                 movieDto.getStudio(),
@@ -110,7 +117,51 @@ public class MovieServiceImpl implements MovieService{
             );
             movieDtos.add(movieDto);
         }
-
         return movieDtos;
+    }
+
+    @Override
+    public MovieDto updateMovie(Integer movieId, MovieDto movieDto, MultipartFile file) throws IOException {
+
+        Movie mv = movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Movie not found!"));
+
+        String fileName = mv.getPoster();
+        if(file != null){
+            Files.deleteIfExists(Paths.get(path + File.separator + fileName));
+            fileName =  fileService.uploadFile(path, file);
+        }
+        movieDto.setPoster(fileName);
+
+        Movie movie = new Movie(
+                movieDto.getMovieId(),
+                movieDto.getTitle(),
+                movieDto.getDirector(),
+                movieDto.getStudio(),
+                movieDto.getMovieCast(),
+                movieDto.getReleaseYear(),
+                movieDto.getPoster()
+        );
+
+       Movie updatedMovie = movieRepository.save(movie);
+
+       String posterUrl = baseUrl + "/file/" + fileName;
+
+        MovieDto response = new MovieDto(
+                updatedMovie.getMovieId(),
+                updatedMovie.getTitle(),
+                updatedMovie.getDirector(),
+                updatedMovie.getStudio(),
+                updatedMovie.getMovieCast(),
+                updatedMovie.getReleaseYear(),
+                updatedMovie.getPoster(),
+                posterUrl
+        );
+
+        return response;
+    }
+
+    @Override
+    public String deleteMovie(Integer movieId) {
+        return "";
     }
 }
