@@ -1,6 +1,7 @@
 package com.cjchika.movieApi.controllers;
 
 import com.cjchika.movieApi.dto.MovieDto;
+import com.cjchika.movieApi.exceptions.EmptyFileException;
 import com.cjchika.movieApi.service.MovieService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +24,11 @@ public class MovieController {
     }
 
     @PostMapping("/add-movie")
-    public ResponseEntity<MovieDto> addMovieHandler(@RequestPart MultipartFile file, @RequestPart String movieDto) throws IOException {
+    public ResponseEntity<MovieDto> addMovieHandler(@RequestPart MultipartFile file,
+                                                    @RequestPart String movieDto) throws IOException, EmptyFileException {
+        if(file.isEmpty()){
+            throw new EmptyFileException("File is empty, please attach file!");
+        }
         MovieDto dto = convertToMovieDto(movieDto);
         return new ResponseEntity<>(movieService.addMovie(dto, file), HttpStatus.CREATED);
     }
@@ -33,7 +38,7 @@ public class MovieController {
         return new ResponseEntity<>(movieService.getMovie(movieId), HttpStatus.OK);
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     public ResponseEntity<List<MovieDto>> getAllMoviesHandler(){
         return new ResponseEntity<>(movieService.getAllMovies(), HttpStatus.OK);
     }
