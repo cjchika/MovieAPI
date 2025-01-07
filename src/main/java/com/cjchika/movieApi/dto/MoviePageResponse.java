@@ -2,10 +2,10 @@ package com.cjchika.movieApi.dto;
 
 import java.util.List;
 
-public record MoviePageResponse(List<MovieDto> movieDtoList,
+public record MoviePageResponse(List<MovieDto> movies,
                                 Integer pageNumber,
                                 Integer pageSize,
-                                int totalElements,
+                                Long totalElements,
                                 int totalPages,
                                 boolean isLast) {
 }

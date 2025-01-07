@@ -183,11 +183,11 @@ public class MovieServiceImpl implements MovieService{
 
         Page<Movie> moviePages = movieRepository.findAll(pageable);
 
-        List<Movie> movies = moviePages.getContent();
+        List<Movie> mvs = moviePages.getContent();
 
-        List<MovieDto> movieDtos = new ArrayList<>();
+        List<MovieDto> movies = new ArrayList<>();
 
-        for(Movie movie : movies){
+        for(Movie movie : mvs){
             String posterUrl = baseUrl + "/file/" + movie.getPoster();
 
             MovieDto movieDto = new MovieDto(
@@ -200,25 +200,25 @@ public class MovieServiceImpl implements MovieService{
                     movie.getPoster(),
                     posterUrl
             );
-            movieDtos.add(movieDto);
+            movies.add(movieDto);
         }
 
-        return new MoviePageResponse(movieDtos, pageNumber, pageSize, (int) moviePages.getTotalElements(), moviePages.getTotalPages(), moviePages.isLast());
+        return new MoviePageResponse(movies, pageNumber, pageSize, moviePages.getTotalElements(), moviePages.getTotalPages(), moviePages.isLast());
     }
 
     @Override
     public MoviePageResponse getAllMoviesWithPaginationAndSorting(Integer pageNumber, Integer pageSize, String sortBy, String dir) {
-        Sort sort = sortBy.equalsIgnoreCase("asc") ? Sort.by(dir).ascending() : Sort.by(dir).descending();
+        Sort sort = dir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
         Page<Movie> moviePages = movieRepository.findAll(pageable);
 
-        List<Movie> movies = moviePages.getContent();
+        List<Movie> mvs = moviePages.getContent();
 
-        List<MovieDto> movieDtos = new ArrayList<>();
+        List<MovieDto> movies = new ArrayList<>();
 
-        for(Movie movie : movies){
+        for(Movie movie : mvs){
             String posterUrl = baseUrl + "/file/" + movie.getPoster();
 
             MovieDto movieDto = new MovieDto(
@@ -231,9 +231,9 @@ public class MovieServiceImpl implements MovieService{
                     movie.getPoster(),
                     posterUrl
             );
-            movieDtos.add(movieDto);
+            movies.add(movieDto);
         }
 
-        return new MoviePageResponse(movieDtos, pageNumber, pageSize, (int) moviePages.getTotalElements(), moviePages.getTotalPages(), moviePages.isLast());
+        return new MoviePageResponse(movies, pageNumber, pageSize, moviePages.getTotalElements(), moviePages.getTotalPages(), moviePages.isLast());
     }
 }

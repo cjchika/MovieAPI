@@ -4,6 +4,7 @@ import com.cjchika.movieApi.dto.MovieDto;
 import com.cjchika.movieApi.dto.MoviePageResponse;
 import com.cjchika.movieApi.exceptions.EmptyFileException;
 import com.cjchika.movieApi.service.MovieService;
+import com.cjchika.movieApi.utils.AppConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
@@ -60,8 +61,21 @@ public class MovieController {
     }
 
     @GetMapping("/paginatedMovies")
-    public ResponseEntity<MoviePageResponse> getPaginatedMoviesHandler(){
-        return new ResponseEntity<>(movieService.getAllMovies(), HttpStatus.OK);
+    public ResponseEntity<MoviePageResponse> getPaginatedMoviesHandler(
+            @RequestParam(defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize
+    ){
+        return new ResponseEntity<>(movieService.getALlMoviesWithPagination(pageNumber, pageSize), HttpStatus.OK);
+    }
+
+    @GetMapping("/sortedMovies")
+    public ResponseEntity<MoviePageResponse> getPaginatedMoviesHandler(
+            @RequestParam(defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(defaultValue = AppConstants.SORT_DIR, required = false) String dir
+    ){
+        return new ResponseEntity<>(movieService.getAllMoviesWithPaginationAndSorting(pageNumber, pageSize, sortBy, dir), HttpStatus.OK);
     }
 
     private MovieDto convertToMovieDto(String movieDtoObj) throws JsonProcessingException {
