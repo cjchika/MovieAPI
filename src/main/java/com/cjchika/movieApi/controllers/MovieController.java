@@ -1,6 +1,7 @@
 package com.cjchika.movieApi.controllers;
 
 import com.cjchika.movieApi.dto.MovieDto;
+import com.cjchika.movieApi.dto.MoviePageResponse;
 import com.cjchika.movieApi.exceptions.EmptyFileException;
 import com.cjchika.movieApi.service.MovieService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,6 +57,11 @@ public class MovieController {
     @DeleteMapping("/{movieId}")
     public ResponseEntity<String> deleteMovieHandle(@PathVariable Integer movieId) throws IOException {
         return new ResponseEntity<>(movieService.deleteMovie(movieId), HttpStatus.OK);
+    }
+
+    @GetMapping("/paginatedMovies")
+    public ResponseEntity<MoviePageResponse> getPaginatedMoviesHandler(){
+        return new ResponseEntity<>(movieService.getAllMovies(), HttpStatus.OK);
     }
 
     private MovieDto convertToMovieDto(String movieDtoObj) throws JsonProcessingException {

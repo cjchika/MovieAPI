@@ -1,6 +1,7 @@
 package com.cjchika.movieApi.service;
 
 import com.cjchika.movieApi.dto.MovieDto;
+import com.cjchika.movieApi.dto.MoviePageResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -17,4 +18,8 @@ public interface MovieService {
     MovieDto updateMovie(Integer movieId, MovieDto movieDto, MultipartFile file) throws IOException;
 
     String deleteMovie(Integer movieId) throws IOException;
+
+    MoviePageResponse getALlMoviesWithPagination(Integer pageNumber, Integer pageSize);
+
+    MoviePageResponse getAllMoviesWithPaginationAndSorting(Integer pageNumber, Integer pageSize, String sortBy, String dir);
 }

@@ -1,11 +1,16 @@
 package com.cjchika.movieApi.service;
 
 import com.cjchika.movieApi.dto.MovieDto;
+import com.cjchika.movieApi.dto.MoviePageResponse;
 import com.cjchika.movieApi.entities.Movie;
 import com.cjchika.movieApi.exceptions.FileExistsException;
 import com.cjchika.movieApi.exceptions.MovieNotFoundException;
 import com.cjchika.movieApi.repositories.MovieRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -102,7 +107,6 @@ public class MovieServiceImpl implements MovieService{
 
         List<MovieDto> movieDtos = new ArrayList<>();
 
-
         for(Movie movie : movies){
             String posterUrl = baseUrl + "/file/" + movie.getPoster();
 
@@ -171,5 +175,65 @@ public class MovieServiceImpl implements MovieService{
         movieRepository.delete(movie);
 
         return "Movie deleted successfully: " + id;
+    }
+
+    @Override
+    public MoviePageResponse getALlMoviesWithPagination(Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        Page<Movie> moviePages = movieRepository.findAll(pageable);
+
+        List<Movie> movies = moviePages.getContent();
+
+        List<MovieDto> movieDtos = new ArrayList<>();
+
+        for(Movie movie : movies){
+            String posterUrl = baseUrl + "/file/" + movie.getPoster();
+
+            MovieDto movieDto = new MovieDto(
+                    movie.getMovieId(),
+                    movie.getTitle(),
+                    movie.getDirector(),
+                    movie.getStudio(),
+                    movie.getMovieCast(),
+                    movie.getReleaseYear(),
+                    movie.getPoster(),
+                    posterUrl
+            );
+            movieDtos.add(movieDto);
+        }
+
+        return new MoviePageResponse(movieDtos, pageNumber, pageSize, (int) moviePages.getTotalElements(), moviePages.getTotalPages(), moviePages.isLast());
+    }
+
+    @Override
+    public MoviePageResponse getAllMoviesWithPaginationAndSorting(Integer pageNumber, Integer pageSize, String sortBy, String dir) {
+        Sort sort = sortBy.equalsIgnoreCase("asc") ? Sort.by(dir).ascending() : Sort.by(dir).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page<Movie> moviePages = movieRepository.findAll(pageable);
+
+        List<Movie> movies = moviePages.getContent();
+
+        List<MovieDto> movieDtos = new ArrayList<>();
+
+        for(Movie movie : movies){
+            String posterUrl = baseUrl + "/file/" + movie.getPoster();
+
+            MovieDto movieDto = new MovieDto(
+                    movie.getMovieId(),
+                    movie.getTitle(),
+                    movie.getDirector(),
+                    movie.getStudio(),
+                    movie.getMovieCast(),
+                    movie.getReleaseYear(),
+                    movie.getPoster(),
+                    posterUrl
+            );
+            movieDtos.add(movieDto);
+        }
+
+        return new MoviePageResponse(movieDtos, pageNumber, pageSize, (int) moviePages.getTotalElements(), moviePages.getTotalPages(), moviePages.isLast());
     }
 }
