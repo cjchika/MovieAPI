@@ -78,7 +78,7 @@ public class MovieServiceImpl implements MovieService{
     @Override
     public MovieDto getMovie(Integer movieId) {
 
-        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException("Movie not found!"));
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException("Movie not found with id!" + movieId));
 
         String posterUrl = baseUrl + "/file/" + movie.getPoster();
 
@@ -124,7 +124,7 @@ public class MovieServiceImpl implements MovieService{
     @Override
     public MovieDto updateMovie(Integer movieId, MovieDto movieDto, MultipartFile file) throws IOException {
 
-        Movie mv = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException("Movie not found!"));
+        Movie mv = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException("Movie not found with id!" + movieId));
 
         String fileName = mv.getPoster();
         if(file != null){
@@ -163,7 +163,7 @@ public class MovieServiceImpl implements MovieService{
 
     @Override
     public String deleteMovie(Integer movieId) throws IOException {
-        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException("Movie not found!"));
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException("Movie not found with id!" + movieId));
         Integer id = movie.getMovieId();
 
         Files.deleteIfExists(Paths.get(path + File.separator + movie.getPoster()));
