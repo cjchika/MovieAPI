@@ -37,7 +37,7 @@ public class MovieServiceImpl implements MovieService{
     public MovieDto addMovie(MovieDto movieDto, MultipartFile file) throws IOException {
 
         if(Files.exists(Paths.get(path + File.separator + file.getOriginalFilename()))){
-            throw new RuntimeException("File already exists! Please enter another file!");
+            throw new RuntimeException("File already exists! Please choose another file!");
         }
         String fileName = fileService.uploadFile(path, file);
 
@@ -161,7 +161,14 @@ public class MovieServiceImpl implements MovieService{
     }
 
     @Override
-    public String deleteMovie(Integer movieId) {
-        return "";
+    public String deleteMovie(Integer movieId) throws IOException {
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Movie not found!"));
+        Integer id = movie.getMovieId();
+
+        Files.deleteIfExists(Paths.get(path + File.separator + movie.getPoster()));
+
+        movieRepository.delete(movie);
+
+        return "Movie deleted successfully: " + id;
     }
 }
