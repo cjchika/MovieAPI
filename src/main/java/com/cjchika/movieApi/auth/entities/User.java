@@ -1,6 +1,12 @@
 package com.cjchika.movieApi.auth.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -8,16 +14,42 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-
+@Table(name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
+
+    @NotBlank(message = "Name field can't be blank")
+    private String name;
+
+    @NotBlank(message = "Username field can't be blank")
+    @Column(unique = true)
     private String username;
+
+    @NotBlank(message = "Email field can't be blank")
+    @Column(unique = true)
+    @Email(message = "Please enter valid email address")
     private String email;
+
+    @NotBlank(message = "Password field can't be blank")
+    @Size(min = 5, message = "Password must have at least 5 characters.")
     private String password;
+
+    @OneToOne(mappedBy = "user")
+    private RefreshToken refreshToken;
+
+    @NotBlank(message = "Role field can't be blank")
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    private boolean isAccountNonExpired = true;
+    private boolean isAccountNonLocked = true;
+    private boolean isCredentialsNonExpired = true;
+    private boolean isEnabled = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -26,12 +58,12 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return "";
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return username;
     }
 
     @Override
