@@ -1,9 +1,11 @@
 package com.cjchika.movieApi.auth.config;
 
 import com.cjchika.movieApi.auth.services.AuthFilterService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -15,10 +17,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.io.IOException;
 
 @Configuration
-@RestControllerAdvice
+//@RequiredArgsConstructor
+@EnableMethodSecurity
 @EnableWebSecurity
 public class SecurityConfiguration {
-
 
     private final AuthFilterService authFilterService;
     private final AuthenticationProvider authenticationProvider;
