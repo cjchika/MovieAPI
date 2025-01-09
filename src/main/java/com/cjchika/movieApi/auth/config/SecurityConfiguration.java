@@ -12,12 +12,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.io.IOException;
 
 @Configuration
-//@RequiredArgsConstructor
 @EnableMethodSecurity
 @EnableWebSecurity
 public class SecurityConfiguration {
@@ -33,16 +29,15 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless authentication
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
+                        .requestMatchers("/api/v1/auth/**").permitAll() // Allow auth-related endpoints without authentication
+                        .requestMatchers("/error").permitAll()          // Allow access to /error without authentication
+                        .anyRequest().authenticated())                 // Secure all other endpoints
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(authFilterService, UsernamePasswordAuthenticationFilter.class);
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Stateless authentication
+                .authenticationProvider(authenticationProvider)  // Custom authentication provider
+                .addFilterBefore(authFilterService, UsernamePasswordAuthenticationFilter.class);  // Custom authentication filter
 
         return http.build();
     }

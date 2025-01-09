@@ -29,36 +29,4 @@ public class RefreshToken {
 
     @OneToOne
     private User user;
-
-    public Integer getTokenId() {
-        return tokenId;
-    }
-
-    public void setTokenId(Integer tokenId) {
-        this.tokenId = tokenId;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public Instant getExpirationTime() {
-        return expirationTime;
-    }
-
-    public void setExpirationTime(Instant expirationTime) {
-        this.expirationTime = expirationTime;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }
